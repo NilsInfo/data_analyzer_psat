@@ -32,10 +32,6 @@ def get_data(fileName):
     print(realNames)
     print(labels)
     print(data)
-    return realNames, data
-
-def plot_data(realNames, data):
-    fig, ax = plt.subplots(1, figsize=(8, 6))
     minsTimesElapsed = []
     # calculate the experience with the minimum of time elapsed
     for i in range(len(data)):
@@ -44,6 +40,48 @@ def plot_data(realNames, data):
         minsTimesElapsed.append(data[i][0][-1] - data[i][0][0])
     minTime = min(minsTimesElapsed)
     print(minsTimesElapsed)
+    return realNames, data, minTime
+def plot_bar_chart(realNames, data, minTime):
+    labels = ['Allociné', 'Le parisien', '20 minutes', 'Marmiton']
+    web_with_ads = []
+    web_ads_blocked = []
+    minsLevels = []
+    coefHour = minTime / 3600
+    for i in range(len(data)):
+        minLen = int(minTime//20)
+        if minLen >= len(data[i][0]) : # sometimes, the data is not wrote (there are holes)
+            minLen = len(data[i][0] )- 1
+        if "blocked" in realNames[data[i][2]] :
+            web_ads_blocked.append(int(((100-data[i][1][minLen])/coefHour)*10)/10)
+        else :
+            web_with_ads.append(int(((100-data[i][1][minLen])/coefHour)*10)/10)
+        minsLevels.append(min(data[i][1][:minLen])) # find the minimum level reached within the min time of exp
+
+    x = np.arange(len(labels))  # the label locations
+    width = 0.35  # the width of the bars
+
+    fig, ax = plt.subplots()
+    with_ads = ax.bar(x - width / 2, web_with_ads, width, label='With ads')
+    ads_blocked = ax.bar(x + width / 2, web_ads_blocked, width, label='ads_blocked')
+
+    # Add some text for labels, title and custom x-axis tick labels, etc.
+    ax.set_ylabel('Battery lost (%)')
+    ax.set_title('Percentage of battery lost per hour')
+    ax.set_xticks(x, labels)
+    ax.set_yticks(np.arange(0,(102-min(minsLevels))//coefHour, step=1))
+
+    ax.legend()
+
+    ax.bar_label(with_ads, padding=3)
+    ax.bar_label(ads_blocked, padding=3)
+
+    fig.tight_layout()
+
+    plt.show()
+
+def plot_data(realNames, data, minTime):
+    fig, ax = plt.subplots(1, figsize=(8, 6))
+
     minsLevels = []
     # plot it
     for i in range(len(data)):
@@ -61,6 +99,8 @@ def plot_data(realNames, data):
     plt.show()
 
 if __name__ == '__main__':
-    realNames, data = get_data("exp_recurrence.txt")
-    plot_data(realNames, data)
+    realNames, data, minTime = get_data("adblock.txt")
+    # plot_data(realNames, data, minTime)
+    plot_bar_chart(realNames, data, minTime)
+
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
