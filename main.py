@@ -147,7 +147,7 @@ def display_standard_deviations(standard_deviations, mean):
     fig, ax = plt.subplots(1, figsize=(8, 6))
 
     ax.bar(standard_deviations[1],standard_deviations[0], label = "standard deviation")
-    ax.axhline(y=mean, color='r', linestyle='-', label= "mean standard deviation")
+    # ax.axhline(y=mean, color='r', linestyle='-', label= "mean standard deviation")
     # ax.set_xticks(np.arange(0,11, step=1))
     ax.set_yticks(np.arange(0,200, step=25))
     ax.set_ylabel("standard deviation of time measured (sec)")
