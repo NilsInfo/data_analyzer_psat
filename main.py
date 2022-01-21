@@ -170,7 +170,7 @@ def calculate_linear_regression(data):
     return regression_coeffs, np.sqrt(sum/len(regression_coeffs))
 
 if __name__ == '__main__':
-    realNames, data, minTime = get_data("adblock.txt")
+    realNames, data, minTime = get_data("exp_tr.txt")
     levels_array = get_levels_array(data)
     # print(levels_array)
     # average_levels = get_average_levels(levels_array)
