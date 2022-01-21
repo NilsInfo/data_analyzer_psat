@@ -127,7 +127,7 @@ def plot_bar_chart(realNames, data, minTime):
     plt.show()
 
 def get_uncertainty(yValues, minLen, redondantUncertainty):
-    coeff_uncertainty = 0.38/yValues[minLen-1]*redondantUncertainty
+    coeff_uncertainty = redondantUncertainty/yValues[minLen-1]*6000/3600
     return ([y*coeff_uncertainty for y in yValues])
 
 def get_standard_deviation2(x,y,yModeled):
@@ -140,6 +140,10 @@ def get_standard_deviation2(x,y,yModeled):
 def plot_data(realNames, data, minTime):
     fig, ax = plt.subplots(1, figsize=(8, 6))
     colors = ['red','blue','yellow','green','pink','magenta','orange']
+
+    # names = ['0%','50%','100%','4','5','6','7']
+    # names = ['8s','20s','30s','60s','5','6','7']
+    names = ['bright','dark','30s','60s','5','6','7']
     modelStderrs = []
     minsLevels = []
     # plot it
@@ -147,17 +151,17 @@ def plot_data(realNames, data, minTime):
         minLen = int(minTime//20)
         if minLen >= len(data[i][0]) : # sometimes, the data is not wrote (there are holes)
             minLen = len(data[i][0] )- 1
-        ax.plot(data[i][0][:minLen],data[i][1][:minLen], label = realNames[data[i][2]], color=colors[i])
+        ax.plot(data[i][0][:minLen],data[i][1][:minLen], label = names[i], color=colors[i])
+        print(realNames[data[i][2]])
         
+        model=np.polyfit(data[i][0][:minLen],data[i][1][:minLen],1)
+        # model=linregress(data[i][0][:minLen],data[i][1][:minLen])
+        # print(model.slope*3600)
+        # print(model.stderr*3600)
+        yModelValues = [j*model[0] for j in data[i][0][:minLen]]+model[1]
+        uncertainty = get_uncertainty(data[i][0][:minLen],minLen,0.53)
 
-        # model=np.polyfit(data[i][0][:minLen],data[i][1][:minLen],1)
-        model=linregress(data[i][0][:minLen],data[i][1][:minLen])
-        print(model.slope*3600)
-        print(model.stderr*3600)
-        yModelValues = [j*model.slope for j in data[i][0][:minLen]]+model.intercept
-        uncertainty = get_uncertainty(yModelValues,minLen,model.stderr)
-
-        modelStderrs.append(model.stderr)
+        # modelStderrs.append(model.stderr)
 
         plt.fill_between(data[i][0][:minLen], 
                         [yModelValues[j]-uncertainty[j] for j in range(len(data[i][1][:minLen]))], 
@@ -165,8 +169,9 @@ def plot_data(realNames, data, minTime):
                         color=colors[i], alpha=0.2)
         minsLevels.append(min(data[i][1][:minLen])) # find the minimum level reached within the min time of exp
 
+    # ax.plot(data[i][0][:minLen],[i*5.4 for i in data[i][0][:minLen]])
     # clean it
-    ax.set_yticks(np.arange(0,12, step=1))
+    ax.set_yticks(np.arange(0,11, step=1))
     ax.set_xlabel("time (sec)")
     ax.set_ylabel("battery consumed (%)")
     ax.grid(which = "major")
@@ -191,7 +196,7 @@ def calculate_linear_regression(data):
     for i in range(len(data)):
         model=np.polyfit(data[i][0],data[i][1],1)
         regression_coeffs.append(model[0]*3600)
-    print(np.mean(regression_coeffs))
+    # print(np.mean(regression_coeffs))
     sum=0
     for i in range(len(regression_coeffs)):
         sum+=(np.mean(regression_coeffs)-regression_coeffs[i])**2
@@ -199,8 +204,8 @@ def calculate_linear_regression(data):
     return regression_coeffs, np.sqrt(sum/len(regression_coeffs))
 
 if __name__ == '__main__':
-    realNames, data, minTime = get_data("exp_tr.txt")
-    levels_array = get_levels_array(data)
+    realNames, data, minTime = get_data("dark_bright_lum100.txt")
+    # levels_array = get_levels_array(data)
     # print(levels_array)
     # average_levels = get_average_levels(levels_array)
     # standard_deviations, mean_standard_deviation = get_standard_deviation(levels_array,average_levels)
