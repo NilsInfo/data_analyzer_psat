@@ -42,9 +42,9 @@ def get_data(fileName):
     print(minsTimesElapsed)
     return realNames, data, minTime
 def plot_bar_chart(realNames, data, minTime):
-    labels = ['Allociné', 'Le parisien', '20 minutes', 'Marmiton']
-    web_with_ads = []
-    web_ads_blocked = []
+    labels = ['Le Figaro','Allociné', 'Le parisien', '20 minutes', 'Marmiton']
+    web_with_ads = [int(7*3600*100/(1642693560-1642691040))/100] # values for lefigaro are hardcoded because of problems of measurements
+    web_ads_blocked = [int(7*3600*100/(1642711560-1642704840))/100]
     minsLevels = []
     coefHour = minTime / 3600
     for i in range(len(data)):

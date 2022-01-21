@@ -1,4 +1,3 @@
-"allocine__with_ads"
 "exp2_allocine__with_ads"
 {"id":"web2_tr20","ts":1642531650,"level":1,"charging":false,"chargingTime":null,"dischargingTime":null}
 {"id":"web2_tr20","ts":1642531670,"level":1,"charging":false,"chargingTime":null,"dischargingTime":null}
