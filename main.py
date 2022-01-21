@@ -41,6 +41,7 @@ def get_data(fileName):
     minTime = min(minsTimesElapsed)
     print(minsTimesElapsed)
     return realNames, data, minTime
+
 def plot_bar_chart(realNames, data, minTime):
     labels = ['Le Figaro','Allociné', 'Le parisien', '20 minutes', 'Marmiton']
     web_with_ads = [int(7*3600*100/(1642693560-1642691040))/100] # values for lefigaro are hardcoded because of problems of measurements
@@ -63,6 +64,8 @@ def plot_bar_chart(realNames, data, minTime):
     fig, ax = plt.subplots()
     with_ads = ax.bar(x - width / 2, web_with_ads, width, label='With ads')
     ads_blocked = ax.bar(x + width / 2, web_ads_blocked, width, label='ads_blocked')
+    ax.errorbar(x - width/2, web_with_ads, 1.2, color='red', ecolor='red', fmt='o', elinewidth = 2, capsize=10)
+    ax.errorbar(x + width/2, web_ads_blocked, 1.2, color='red', ecolor='red', fmt='o', elinewidth = 2, capsize=10)
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel('Battery lost (%)')
@@ -90,12 +93,14 @@ def plot_data(realNames, data, minTime):
             minLen = len(data[i][0] )- 1
         ax.plot(data[i][0][:minLen],data[i][1][:minLen], label = realNames[data[i][2]])
         minsLevels.append(min(data[i][1][:minLen])) # find the minimum level reached within the min time of exp
+        
     # clean it
     ax.set_yticks(np.arange(min(minsLevels)-1,100, step=1))
     ax.set_xlabel("time (sec)")
     ax.set_ylabel("battery (%)")
     ax.grid(which = "major")
     plt.legend(loc="upper right", frameon=False)
+
     plt.show()
 
 if __name__ == '__main__':
