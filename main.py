@@ -1,6 +1,8 @@
 import json
 from matplotlib import pyplot as plt
 import numpy as np
+from scipy.stats import linregress
+
 def get_data(fileName):
     realNames = dict() # links between experiences and ids
     labels = dict() # links between lists and ids
@@ -124,20 +126,47 @@ def plot_bar_chart(realNames, data, minTime):
 
     plt.show()
 
+def get_uncertainty(yValues, minLen, redondantUncertainty):
+    coeff_uncertainty = 0.38/yValues[minLen-1]*redondantUncertainty
+    return ([y*coeff_uncertainty for y in yValues])
+
+def get_standard_deviation2(x,y,yModeled):
+    sum=0
+    for i in range(len(x)):
+        sum+=(yModeled[i]-y[i])**2
+    
+    return (np.sqrt(sum)/len(x))
+
 def plot_data(realNames, data, minTime):
     fig, ax = plt.subplots(1, figsize=(8, 6))
-
+    colors = ['red','blue','yellow','green','pink','magenta','orange']
+    modelStderrs = []
     minsLevels = []
     # plot it
     for i in range(len(data)):
         minLen = int(minTime//20)
         if minLen >= len(data[i][0]) : # sometimes, the data is not wrote (there are holes)
             minLen = len(data[i][0] )- 1
-        ax.plot(data[i][0][:minLen],data[i][1][:minLen], label = realNames[data[i][2]])
+        ax.plot(data[i][0][:minLen],data[i][1][:minLen], label = realNames[data[i][2]], color=colors[i])
+        
+
+        # model=np.polyfit(data[i][0][:minLen],data[i][1][:minLen],1)
+        model=linregress(data[i][0][:minLen],data[i][1][:minLen])
+        print(model.slope*3600)
+        print(model.stderr*3600)
+        yModelValues = [j*model.slope for j in data[i][0][:minLen]]+model.intercept
+        uncertainty = get_uncertainty(yModelValues,minLen,model.stderr)
+
+        modelStderrs.append(model.stderr)
+
+        plt.fill_between(data[i][0][:minLen], 
+                        [yModelValues[j]-uncertainty[j] for j in range(len(data[i][1][:minLen]))], 
+                        [yModelValues[j]+uncertainty[j] for j in range(len(data[i][1][:minLen]))],
+                        color=colors[i], alpha=0.2)
         minsLevels.append(min(data[i][1][:minLen])) # find the minimum level reached within the min time of exp
 
     # clean it
-    ax.set_yticks(np.arange(0,25, step=1))
+    ax.set_yticks(np.arange(0,12, step=1))
     ax.set_xlabel("time (sec)")
     ax.set_ylabel("battery consumed (%)")
     ax.grid(which = "major")
