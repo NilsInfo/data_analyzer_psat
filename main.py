@@ -88,9 +88,9 @@ def get_standard_deviation(levels_array,average_levels):
     return standard_deviations , np.mean(standard_deviations[0])
 
 def plot_bar_chart(realNames, data, minTime):
-    labels = ['Allociné', 'Le parisien', '20 minutes', 'Marmiton']
-    web_with_ads = []
-    web_ads_blocked = []
+    labels = ['Le Figaro','Allociné', 'Le parisien', '20 minutes', 'Marmiton']
+    web_with_ads = [int(7*3600*100/(1642693560-1642691040))/100] # values for lefigaro are hardcoded because of problems of measurements
+    web_ads_blocked = [int(7*3600*100/(1642711560-1642704840))/100]
     minsLevels = []
     coefHour = minTime / 3600
     for i in range(len(data)):
@@ -109,6 +109,8 @@ def plot_bar_chart(realNames, data, minTime):
     fig, ax = plt.subplots()
     with_ads = ax.bar(x - width / 2, web_with_ads, width, label='With ads')
     ads_blocked = ax.bar(x + width / 2, web_ads_blocked, width, label='ads_blocked')
+    ax.errorbar(x - width/2, web_with_ads, 1.2, color='red', ecolor='red', fmt='o', elinewidth = 2, capsize=10)
+    ax.errorbar(x + width/2, web_ads_blocked, 1.2, color='red', ecolor='red', fmt='o', elinewidth = 2, capsize=10)
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel('Battery lost (%)')
@@ -176,6 +178,7 @@ def plot_data(realNames, data, minTime):
     ax.set_ylabel("battery consumed (%)")
     ax.grid(which = "major")
     plt.legend(loc="upper right", frameon=False)
+
     plt.show()
 
 def display_standard_deviations(standard_deviations, mean):

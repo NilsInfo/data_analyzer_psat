@@ -1,0 +1,6 @@
+"exp1_lefigaro__with_ads"
+{"id":"web1_tr20","ts":1642693560,"level":0.99,"charging":false,"chargingTime":null,"dischargingTime":null}
+{"id":"web1_tr20","ts":1642691040,"level":0.92,"charging":false,"chargingTime":null,"dischargingTime":null}
+"exp6_lefigaro_ads_blocked"
+{"id":"adblock_web1_tr20","ts":1642704840,"level":0.99,"charging":false,"chargingTime":null,"dischargingTime":null}
+{"id":"adblock_web1_tr20","ts":1642711560,"level":0.93,"charging":false,"chargingTime":null,"dischargingTime":null}
