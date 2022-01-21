@@ -142,7 +142,6 @@ def plot_data(realNames, data, minTime):
     plt.legend(loc="upper right", frameon=False)
     plt.show()
 
-
 def display_standard_deviations(standard_deviations, mean):
     fig, ax = plt.subplots(1, figsize=(8, 6))
 
@@ -156,15 +155,30 @@ def display_standard_deviations(standard_deviations, mean):
     plt.legend(loc="upper right", frameon=False)
     plt.show()
 
+def calculate_linear_regression(data):
+    regression_coeffs = []
+    for i in range(len(data)):
+        model=np.polyfit(data[i][0],data[i][1],1)
+        regression_coeffs.append(model[0]*3600)
+    
+    sum=0
+    for i in range(len(regression_coeffs)):
+        sum+=(np.mean(regression_coeffs)-regression_coeffs[i])**2
+    
+    return regression_coeffs, np.sqrt(sum/len(regression_coeffs))
+
 if __name__ == '__main__':
     realNames, data, minTime = get_data("exp_recurrence.txt")
     levels_array = get_levels_array(data)
     # print(levels_array)
     average_levels = get_average_levels(levels_array)
     standard_deviations, mean_standard_deviation = get_standard_deviation(levels_array,average_levels)
-    print(standard_deviations)
-    print(mean_standard_deviation)
-    display_standard_deviations(standard_deviations, mean_standard_deviation)
+    # print(standard_deviations)
+    # print(mean_standard_deviation)
+    regression_coeffs, standard_deviation_coeffs = calculate_linear_regression(data)
+    print(regression_coeffs)
+    print(standard_deviation_coeffs)
+    # display_standard_deviations(standard_deviations, mean_standard_deviation)
     # plot_data(realNames, data, minTime)
     # plot_bar_chart(realNames, data, minTime)
 
