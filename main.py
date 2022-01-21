@@ -29,6 +29,7 @@ def get_data(fileName):
 
                         data[labels[jsonl["id"]]][0].append(int(jsonl["ts"]) - offsets[jsonl["id"]])
                         data[labels[jsonl["id"]]][1].append(99-jsonl["level"]*100)
+                        # data[labels[jsonl["id"]]][1].append(jsonl["level"]*100)
     # print(realNames)
     # print(labels)
     # print(data[0])
@@ -117,6 +118,7 @@ def plot_bar_chart(realNames, data, minTime):
 
     ax.bar_label(with_ads, padding=3)
     ax.bar_label(ads_blocked, padding=3)
+    ax.boxplot([2,10])
 
     fig.tight_layout()
 
@@ -135,7 +137,7 @@ def plot_data(realNames, data, minTime):
         minsLevels.append(min(data[i][1][:minLen])) # find the minimum level reached within the min time of exp
 
     # clean it
-    ax.set_yticks(np.arange(0,10, step=1))
+    ax.set_yticks(np.arange(0,25, step=1))
     ax.set_xlabel("time (sec)")
     ax.set_ylabel("battery consumed (%)")
     ax.grid(which = "major")
@@ -160,7 +162,7 @@ def calculate_linear_regression(data):
     for i in range(len(data)):
         model=np.polyfit(data[i][0],data[i][1],1)
         regression_coeffs.append(model[0]*3600)
-    
+    print(np.mean(regression_coeffs))
     sum=0
     for i in range(len(regression_coeffs)):
         sum+=(np.mean(regression_coeffs)-regression_coeffs[i])**2
@@ -168,18 +170,20 @@ def calculate_linear_regression(data):
     return regression_coeffs, np.sqrt(sum/len(regression_coeffs))
 
 if __name__ == '__main__':
-    realNames, data, minTime = get_data("exp_recurrence.txt")
+    realNames, data, minTime = get_data("adblock.txt")
     levels_array = get_levels_array(data)
     # print(levels_array)
-    average_levels = get_average_levels(levels_array)
-    standard_deviations, mean_standard_deviation = get_standard_deviation(levels_array,average_levels)
+    # average_levels = get_average_levels(levels_array)
+    # standard_deviations, mean_standard_deviation = get_standard_deviation(levels_array,average_levels)
+    # regression_coeffs, standard_deviation_coeffs = calculate_linear_regression(data)
+    # print(regression_coeffs)
+    # print(standard_deviation_coeffs)
     # print(standard_deviations)
     # print(mean_standard_deviation)
-    regression_coeffs, standard_deviation_coeffs = calculate_linear_regression(data)
-    print(regression_coeffs)
-    print(standard_deviation_coeffs)
     # display_standard_deviations(standard_deviations, mean_standard_deviation)
-    # plot_data(realNames, data, minTime)
+    # print(realNames)
+    plot_data(realNames, data, minTime)
+    # print(data)
     # plot_bar_chart(realNames, data, minTime)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
